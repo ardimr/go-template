@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"go_project_template/internal/repository"
+	"go_project_template/internal/user/repository"
 	"regexp"
 	"testing"
 
@@ -29,7 +29,7 @@ func TestGetUser(t *testing.T) {
 	defer db.Close()
 
 	// Setup Repository
-	Repository := repository.NewPostgresRepository(db)
+	Repository := repository.NewUserRepository(db)
 
 	// Expected query statement
 	queryStatement := `SELECT * FROM public.users`
@@ -55,7 +55,7 @@ func TestGetUserById(t *testing.T) {
 	db, mock := NewDBMock()
 	defer db.Close()
 	// Setup Repository
-	Repository := repository.NewPostgresRepository(db)
+	Repository := repository.NewUserRepository(db)
 
 	// Expected query statement
 	queryStatement := `SELECT * FROM public.users WHERE id=$1`
@@ -83,7 +83,7 @@ func BenchmarkGetUsers(b *testing.B) {
 	db, mock := NewDBMock()
 
 	// Setup Repository
-	Repository := repository.NewPostgresRepository(db)
+	Repository := repository.NewUserRepository(db)
 
 	// Expected query statement
 	queryStatement := `SELECT * FROM public.users`
@@ -110,7 +110,7 @@ func BenchmarkGetUserById(b *testing.B) {
 	db, mock := NewDBMock()
 
 	// Setup Repository
-	Repository := repository.NewPostgresRepository(db)
+	Repository := repository.NewUserRepository(db)
 
 	// Expected query statement
 	queryStatement := `SELECT * FROM public.users WHERE id=$1`
@@ -127,7 +127,7 @@ func BenchmarkGetUserById(b *testing.B) {
 	// Excecute mock query
 	user, err := Repository.GetUserById(context.Background(), int64(1))
 
-	fmt.Println(*user)
+	fmt.Println(user)
 	if err != nil {
 		panic(err)
 	}

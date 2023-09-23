@@ -2,28 +2,28 @@ package controller
 
 import (
 	"database/sql"
-	"go_project_template/internal/model"
-	"go_project_template/internal/repository"
+	"go_project_template/internal/user/model"
+	"go_project_template/internal/user/usecase"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-type Controller struct {
-	querier repository.Repository
+type UserController struct {
+	userUseCase usecase.IUserUseCase
 }
 
-func NewController(q repository.Repository) *Controller {
-	return &Controller{
-		querier: q,
+func NewUserController(userUseCase usecase.IUserUseCase) *UserController {
+	return &UserController{
+		userUseCase: userUseCase,
 	}
 }
 
 // Controller Implementation
 
-func (controller *Controller) GetUsers(ctx *gin.Context) {
+func (controller *UserController) GetUsers(ctx *gin.Context) {
 	// Get users data from db
-	users, err := controller.querier.GetUsers(ctx)
+	users, err := controller.userUseCase.GetUsers(ctx)
 	if err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
@@ -40,7 +40,7 @@ func (controller *Controller) GetUsers(ctx *gin.Context) {
 	)
 }
 
-func (controller *Controller) GetUserById(ctx *gin.Context) {
+func (controller *UserController) GetUserById(ctx *gin.Context) {
 	var reqUri model.GetUserByIdReqUri
 
 	// Request URI Binding
@@ -54,7 +54,7 @@ func (controller *Controller) GetUserById(ctx *gin.Context) {
 		return
 	}
 
-	user, err := controller.querier.GetUserById(ctx, reqUri.ID)
+	user, err := controller.userUseCase.GetUserById(ctx, reqUri.ID)
 
 	if err != nil {
 		switch err {
@@ -76,7 +76,7 @@ func (controller *Controller) GetUserById(ctx *gin.Context) {
 	)
 }
 
-func (controler *Controller) AddNewUser(ctx *gin.Context) {
+func (controler *UserController) AddNewUser(ctx *gin.Context) {
 	var newUser model.User
 
 	if err := ctx.BindJSON(&newUser); err != nil {
@@ -89,7 +89,7 @@ func (controler *Controller) AddNewUser(ctx *gin.Context) {
 		return
 	}
 
-	newId, err := controler.querier.AddNewUser(ctx, newUser)
+	newId, err := controler.userUseCase.AddNewUser(ctx, newUser)
 
 	if err != nil {
 		ctx.JSON(
@@ -110,7 +110,7 @@ func (controler *Controller) AddNewUser(ctx *gin.Context) {
 	)
 }
 
-func (controller *Controller) UpdateUser(ctx *gin.Context) {
+func (controller *UserController) UpdateUser(ctx *gin.Context) {
 	var user model.User
 
 	if err := ctx.BindJSON(&user); err != nil {
@@ -123,7 +123,7 @@ func (controller *Controller) UpdateUser(ctx *gin.Context) {
 		return
 	}
 
-	res, err := controller.querier.UpdateUser(ctx, user)
+	res, err := controller.userUseCase.UpdateUser(ctx, user)
 
 	if err != nil {
 		ctx.JSON(
@@ -143,7 +143,7 @@ func (controller *Controller) UpdateUser(ctx *gin.Context) {
 	)
 }
 
-func (controller *Controller) DeleteUser(ctx *gin.Context) {
+func (controller *UserController) DeleteUser(ctx *gin.Context) {
 	var reqUri model.DeleteUserReqUri
 
 	if err := ctx.BindUri(&reqUri); err != nil {
@@ -156,7 +156,7 @@ func (controller *Controller) DeleteUser(ctx *gin.Context) {
 		return
 	}
 
-	if err := controller.querier.DeleteUser(ctx, reqUri.ID); err != nil {
+	if err := controller.userUseCase.DeleteUser(ctx, reqUri.ID); err != nil {
 		ctx.JSON(
 			http.StatusInternalServerError,
 			gin.H{

@@ -5,9 +5,9 @@ import (
 	cloudstorage "go_project_template/configs/cloud_storage"
 	"go_project_template/configs/db"
 	"go_project_template/configs/redis"
-	"go_project_template/internal/controller"
-	"go_project_template/internal/repository"
-	router "go_project_template/internal/routes"
+	"go_project_template/internal/user"
+	"go_project_template/internal/user/controller"
+	"go_project_template/internal/user/repository"
 	"log"
 	"os"
 	"strconv"
@@ -87,8 +87,8 @@ func main() {
 	restServer.Use(gzip.Gzip(gzip.DefaultCompression))
 
 	// Setup Router
-	userController := controller.NewController(repository.NewPostgresRepository(dbConnection))
-	userRouter := router.NewRouter(userController)
+	userController := controller.NewUserController(repository.NewUserRepository(dbConnection))
+	userRouter := user.NewRouter(userController)
 
 	userRouter.AddRoute(restServer.Group("/api"))
 	// restServer.Run("localhost:8080")

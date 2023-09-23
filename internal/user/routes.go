@@ -1,16 +1,16 @@
-package router
+package user
 
 import (
-	"go_project_template/internal/controller"
+	"go_project_template/internal/user/controller"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Router struct {
-	controller *controller.Controller
+	controller *controller.UserController
 }
 
-func NewRouter(controller *controller.Controller) *Router {
+func NewRouter(controller *controller.UserController) *Router {
 	return &Router{
 		controller: controller,
 	}
