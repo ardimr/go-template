@@ -8,6 +8,7 @@ import (
 	"go_project_template/internal/user"
 	"go_project_template/internal/user/controller"
 	"go_project_template/internal/user/repository"
+	"go_project_template/internal/user/usecase"
 	"log"
 	"os"
 	"strconv"
@@ -87,7 +88,9 @@ func main() {
 	restServer.Use(gzip.Gzip(gzip.DefaultCompression))
 
 	// Setup Router
-	userController := controller.NewUserController(repository.NewUserRepository(dbConnection))
+	userRepository := repository.NewUserRepository(dbConnection)
+	userUseCase := usecase.NewUserUseCae(userRepository)
+	userController := controller.NewUserController(userUseCase)
 	userRouter := user.NewRouter(userController)
 
 	userRouter.AddRoute(restServer.Group("/api"))
